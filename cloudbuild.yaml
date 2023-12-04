@@ -1,0 +1,16 @@
+steps:
+  # Docker Build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 
+           'us-central1-docker.pkg.dev/${PROJECT_ID}/demo-images/scraper-test', 
+           '.']
+
+  # Docker Push
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 
+           'us-central1-docker.pkg.dev/${PROJECT_ID}/demo-images/scraper-test']
+  
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', 'scraper-test', '--image', 'us-central1-docker.pkg.dev/${PROJECT_ID}/demo-images/scraper-test', '--port', '5000', '--allow-unauthenticated', '--region', 'us-central1']
